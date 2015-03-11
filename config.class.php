@@ -12,7 +12,7 @@
 				'db' => array(
 					'host' => 'localhost',
 					'user' => 'root',
-					'pass' => 'AlfaZulu689',
+					'pass' => '',
 					'db' => 'movie'
 				)
 			);

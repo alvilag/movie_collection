@@ -8,6 +8,10 @@
 		 */
 		private $config;
 		/**
+		 * DB resource
+		 */
+		public $link;
+		/**
 		 * Constructor will set up db connection
 		 * @return $this->connect
 		 * @see DB::connect() 
@@ -24,13 +28,14 @@
 		 * @return mixed DB resource on success or string on error
 		 */
 		function connect() {
-			$link = mysql_connect($this->config['host'],$this->config['user'],$this->config['pass']);
+			$link = mysql_connect($this->config['db']['host'],$this->config['db']['user'],$this->config['db']['pass']);
 			if(!$link) {
 				return mysql_error();
 			}
-			if(!mysql_select_db($this->config['db'])) {
+			if(!mysql_select_db($this->config['db']['db'])) {
 				return mysql_error();
 			}
+			$this->link = $link; 
 			return $link;
 		}
 	}

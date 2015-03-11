@@ -23,6 +23,10 @@
 		 * Validator object
 		 */
 		public $validation;
+		/**
+		 * Table name
+		 */
+		 public $table = 'movie';
 		
 		/**
 		 * Constructor will set up validator
@@ -114,6 +118,8 @@
 		 * Get actors by birthdate descending
 		 * 
 		 * @param array Actors array
+		 * @return array The sorted array
+		 * 
 		 */
 		public function getActorsByBrith($actor) {
 			$sorted = array();
@@ -124,6 +130,74 @@
 			}
 			ksort($sorted);
 			return $sorted;
+		}
+		
+		/**
+		 * Get actors by birthdate descending from database
+		 * 
+		 * @param integer If it is empty you'll get all actors [optional]
+		 * @return array results from DB 
+		 */
+		public function getActorsByBrithDB($movie_id = NULL) {
+			$sql = 'SELECT * FROM '.$this->table.' as m
+				INNER JOIN actor as a ON(m.id = a.movie_id)';
+			if($movie_id) {
+				$sql.=' WHERE m.id = '.mysql_real_escape_string($movie_id).' ';
+			}
+			$sql .= ' ORDER BY a.birthdate DESC';
+			$res = mysql_query($sql);
+			if(!$res) {
+				return mysql_error();
+			}
+			$result = array();
+			while($row = mysql_fetch_assoc($res)) {
+				if($row['runtime']) {
+					$row['runtime'] = $row['runtime']*60; //Get minutes from seconds
+				}
+				if($row['release_date']) {
+					$row['release_date'] = date('Y-m-d',$row['release_date']);
+				}
+				if($row['birthdate']) {
+					$row['birthdate'] = date('Y-m-d',$row['birthdate']);
+				}
+				array_push($result,$row);
+			}
+			if($json) {
+				return json_encode($result);
+			}
+			return $result;
+		}
+		
+		/**
+		 * Get movies by ID from database with actors
+		 * @param integes ID of movie
+		 * @param bool Return with JSON string or not. Default is FALSE. [optional]
+		 */
+		public function getByIdFromDb($id,$json = FALSE) {
+			$sql = 'SELECT * FROM '.$this->table.' as m
+				INNER JOIN actor as a ON(m.id = a.movie_id)
+				WHERE m.id = '.mysql_real_escape_string($id);
+			$res = mysql_query($sql);
+			if(!$res) {
+				return mysql_error();
+			}
+			$result = array();
+			while($row = mysql_fetch_assoc($res)) {
+				if($row['runtime']) {
+					$row['runtime'] = $row['runtime']*60; //Get minutes from seconds
+				}
+				if($row['release_date']) {
+					$row['release_date'] = date('Y-m-d',$row['release_date']);
+				}
+				if($row['birthdate']) {
+					$row['birthdate'] = date('Y-m-d',$row['birthdate']);
+				}
+				array_push($result,$row);
+			}
+			if($json) {
+				return json_encode($result);
+			}
+			return $result;
 		}
 	}
 ?>

@@ -23,6 +23,10 @@
 		 * Validator object
 		 */
 		public $validation;
+		/**
+		 * Table name
+		 */
+		 public $table = 'actor';
 		
 		/**
 		 * Constructor set up validation
